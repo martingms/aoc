@@ -6,6 +6,7 @@ import sys
 import requests
 from slackclient import SlackClient
 
+
 def get_aoc_stats(leaderboard_id, session_cookie):
     url = 'http://adventofcode.com/2017/leaderboard/private/view/{}.json'\
             .format(leaderboard_id)
@@ -27,7 +28,7 @@ def format_message(stats):
     for i, member in enumerate(members):
         lines.append('*{pos}*  {name}: {score} ({stars} stars)'.format(
             pos=i + 1,
-            name=member['name'] or 'ANON',
+            name=member['name'] or 'ANON #{}'.format(member['id']),
             score=member['local_score'] or 0,
             stars=member['stars']
         ))
