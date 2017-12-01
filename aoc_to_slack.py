@@ -45,8 +45,8 @@ def post_to_slack(api_token, channel, msg):
         text=msg
     )
 
-usage_str = '''
-usage: ./aoc_to_slack.py SLACK_API_TOKEN SLACK_CHANNEL AOC_ID AOC_COOKIE'
+usage_str = '''\
+usage: ./aoc_to_slack.py SLACK_API_TOKEN SLACK_CHANNEL AOC_ID AOC_COOKIE'\
 '''
 
 if len(sys.argv) != 5:
