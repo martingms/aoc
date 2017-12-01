@@ -32,7 +32,8 @@ def format_message(stats):
             reverse=True)
 
     today = date.today().day
-    early_bird = None
+    earliest_first_star = None
+    earliest_second_star = None
 
     for i, member in enumerate(members):
         name = member['name'] or 'ANON #{}'.format(member['id'])
@@ -43,26 +44,43 @@ def format_message(stats):
             stars=member['stars']
         ))
 
-        last_star_ts = _parse_ts(member['last_star_ts'])
-
         try:
             member_today = member['completion_day_level'][str(today)]
             first_star_ts = _parse_ts(member_today['1']['get_star_ts'])
         except KeyError:
             continue
 
-        if early_bird is None or first_star_ts < early_bird[1]:
-            early_bird = (name, first_star_ts)
+        if earliest_first_star is None or first_star_ts < earliest_first_star[1]:
+            earliest_first_star = (name, first_star_ts)
 
-    if early_bird is not None:
+        try:
+            second_star_ts = _parse_ts(member_today['2']['get_star_ts'])
+        except KeyError:
+            continue
+
+        if earliest_second_star is None \
+                or second_star_ts < earliest_second_star[1]:
+            earliest_second_star = (name, second_star_ts)
+
+    if earliest_first_star is not None:
         lines.append(
             '\nTodays first :star::  :crown: *{name}* :crown:, at {time}!'.format(
-                name=early_bird[0],
-                time=early_bird[1].time().isoformat()
+                name=earliest_first_star[0],
+                time=earliest_first_star[1].time().isoformat()
             )
         )
     else:
         lines.append('No :star: earned so far today :face_with_rolling_eyes:')
+
+    if earliest_second_star is not None:
+        lines.append(
+            '\nFirst to finish :star::star::  :crown: *{name}* :crown:, at {time}!'.format(
+                name=earliest_second_star[0],
+                time=earliest_second_star[1].time().isoformat()
+            )
+        )
+    else:
+        lines.append('No one has finished so far today :face_with_rolling_eyes:')
 
     return '\n'.join(lines)
 
