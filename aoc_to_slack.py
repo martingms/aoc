@@ -18,16 +18,6 @@ def get_aoc_stats(leaderboard_id, session_cookie):
     return r.json()
 
 
-def post_to_slack(api_token, channel, msg):
-    sc = SlackClient(api_token)
-
-    sc.api_call(
-        'chat.postMessage',
-        channel=channel,
-        text=msg
-    )
-
-
 def format_message(stats):
     lines = ['*:santa: Advent of Code 2017 :santa: - Blank leaderboard*\n']
 
@@ -45,8 +35,21 @@ def format_message(stats):
     return '\n'.join(lines)
 
 
+def post_to_slack(api_token, channel, msg):
+    sc = SlackClient(api_token)
+
+    sc.api_call(
+        'chat.postMessage',
+        channel=channel,
+        text=msg
+    )
+
+usage_str = '''
+usage: ./aoc_to_slack.py SLACK_API_TOKEN SLACK_CHANNEL AOC_ID AOC_COOKIE'
+'''
+
 if len(sys.argv) != 5:
-    print('usage: ./aoc_to_slack.py SLACK_API_TOKEN SLACK_CHANNEL AOC_ID AOC_COOKIE')
+    print(usage_str, file=sys.stderr)
     sys.exit(1)
 
 msg = format_message(get_aoc_stats(sys.argv[3], sys.argv[4]))
