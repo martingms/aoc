@@ -26,7 +26,7 @@ def format_message(stats):
             reverse=True)
 
     for i, member in enumerate(members):
-        lines.append('*{pos}*  {name}: {score} ({stars} stars)'.format(
+        lines.append('*{pos}*  {name}: {score} (:star: x {stars})'.format(
             pos=i + 1,
             name=member['name'] or 'ANON #{}'.format(member['id']),
             score=member['local_score'] or 0,
