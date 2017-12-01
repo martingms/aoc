@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
-def captcha(s, j):
-    inp = list(map(int, s))
-    return sum(inp[i] for i in range(len(inp))
+def captcha(inp, j):
+    return sum(int(inp[i]) for i in range(len(inp))
                if inp[i] == inp[(i + j) % len(inp)])
 
 # Input data
