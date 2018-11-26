@@ -9,7 +9,7 @@ import requests
 from slackclient import SlackClient
 
 
-def _parse_ts(ts):
+def parse_ts(ts):
     return datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
 
 
@@ -46,7 +46,7 @@ def format_message(stats):
 
         try:
             member_today = member['completion_day_level'][str(today)]
-            first_star_ts = _parse_ts(member_today['1']['get_star_ts'])
+            first_star_ts = parse_ts(member_today['1']['get_star_ts'])
         except KeyError:
             continue
 
@@ -54,7 +54,7 @@ def format_message(stats):
             earliest_first_star = (name, first_star_ts)
 
         try:
-            second_star_ts = _parse_ts(member_today['2']['get_star_ts'])
+            second_star_ts = parse_ts(member_today['2']['get_star_ts'])
         except KeyError:
             continue
 
