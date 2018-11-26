@@ -26,7 +26,7 @@ def get_aoc_stats(leaderboard_id, session_cookie):
 
 
 def format_message(stats):
-    lines = ['*:santa: Advent of Code 2017 :santa:*\n']
+    lines = ['*:santa: Advent of Code {} :santa:*\n'.format(stats['event'])]
 
     members = sorted(stats['members'].values(), key=itemgetter('local_score'),
             reverse=True)
