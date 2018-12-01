@@ -14,7 +14,7 @@ def parse_ts(ts):
 
 
 def get_aoc_stats(leaderboard_id, session_cookie):
-    url = 'http://adventofcode.com/2017/leaderboard/private/view/{}.json'\
+    url = 'http://adventofcode.com/2018/leaderboard/private/view/{}.json'\
             .format(leaderboard_id)
 
     r = requests.get(url, cookies={
