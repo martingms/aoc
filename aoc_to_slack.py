@@ -10,7 +10,7 @@ from slackclient import SlackClient
 
 
 def parse_ts(ts):
-    return datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
+    return datetime.fromtimestamp(int(ts), tz=local_tz)
 
 
 def get_aoc_stats(leaderboard_id, session_cookie):
