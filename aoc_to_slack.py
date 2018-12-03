@@ -26,61 +26,60 @@ def get_aoc_stats(leaderboard_id, session_cookie):
 
 
 def format_message(stats):
-    lines = ['*:santa: Advent of Code {} :santa:*\n'.format(stats['event'])]
-
-    members = sorted(stats['members'].values(), key=itemgetter('local_score'),
-            reverse=True)
-
     today = date.today().day
-    earliest_first_star = None
-    earliest_second_star = None
 
-    for i, member in enumerate(members):
-        name = member['name'] or 'ANON #{}'.format(member['id'])
+    members = []
+    for member in stats['members'].values():
+        member = {
+            **member,
+            'name': member['name'] or 'ANON #{}'.format(member['id']),
+            'star_ts': { '1': None, '2':None }
+        }
+        try:
+            completion_today = member['completion_day_level'][str(today)]
+        except KeyError:
+            pass
+        else:
+            for star in ('1', '2'):
+                member['star_ts'][star] = parse_ts(
+                    completion_today[star]['get_star_ts']
+                )
+
+        members.append(member)
+
+
+    lines = [
+        '*:santa: Advent of Code {} :santa:*\n'.format(stats['event']),
+        '*Leaderboard:*',
+    ]
+
+    # Score
+    for i, member in enumerate(sorted(members, key=itemgetter('local_score'), reverse=True)):
         lines.append('*{pos}*  {name}: {score} (:star: x {stars})'.format(
             pos=i + 1,
-            name=name,
+            name=member['name'],
             score=member['local_score'] or 0,
             stars=member['stars']
         ))
 
-        try:
-            member_today = member['completion_day_level'][str(today)]
-            first_star_ts = parse_ts(member_today['1']['get_star_ts'])
-        except KeyError:
-            continue
+    lines.append('\n')
 
-        if earliest_first_star is None or first_star_ts < earliest_first_star[1]:
-            earliest_first_star = (name, first_star_ts)
+    # Star top threes
+    for star in ('1', '2'):
+        lines.append(f'*Todays top 3 for :star: #{star}:*')
 
-        try:
-            second_star_ts = parse_ts(member_today['2']['get_star_ts'])
-        except KeyError:
-            continue
+        top3 = sorted(
+            (m for m in members if m['star_ts'][star] is not None),
+            key=lambda m: m['star_ts'][star],
+        )[:3]
+        for i, member in enumerate(top3):
+            lines.append('*{pos}*  {name}: {ts}'.format(
+                pos=i + 1,
+                name=member['name'],
+                ts=member['star_ts'][star],
+            ))
 
-        if earliest_second_star is None \
-                or second_star_ts < earliest_second_star[1]:
-            earliest_second_star = (name, second_star_ts)
-
-    if earliest_first_star is not None:
-        lines.append(
-            '\nTodays first :star::  :crown: *{name}* :crown:, at {time}!'.format(
-                name=earliest_first_star[0],
-                time=earliest_first_star[1].time().isoformat()
-            )
-        )
-    else:
-        lines.append('No :star: earned so far today :face_with_rolling_eyes:')
-
-    if earliest_second_star is not None:
-        lines.append(
-            '\nFirst to finish :star::star::  :crown: *{name}* :crown:, at {time}!'.format(
-                name=earliest_second_star[0],
-                time=earliest_second_star[1].time().isoformat()
-            )
-        )
-    else:
-        lines.append('No one has finished so far today :face_with_rolling_eyes:')
+        lines.append('\n')
 
     return '\n'.join(lines)
 
