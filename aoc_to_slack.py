@@ -66,13 +66,19 @@ def format_message(stats):
 
     # Star top threes
     for star in ('1', '2'):
-        lines.append(f'*Todays top 3 for :star: #{star}:*')
 
-        top3 = sorted(
+        top = sorted(
             (m for m in members if m['star_ts'][star] is not None),
             key=lambda m: m['star_ts'][star],
         )[:3]
-        for i, member in enumerate(top3):
+
+        if not top:
+            lines.append(f'*No one has finished :star: #{star} today :face_with_rolling_eyes:*')
+            continue
+
+        lines.append(f'*Todays top {len(top)} for :star: #{star}:*')
+
+        for i, member in enumerate(top):
             lines.append('*{pos}*  {name}: {ts}'.format(
                 pos=i + 1,
                 name=member['name'],
