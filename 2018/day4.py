@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 from collections import defaultdict, namedtuple
 from datetime import datetime
-from itertools import takewhile
-from operator import itemgetter
+from functools import reduce
 
 # Input data
 BEGINS = 0
@@ -28,16 +27,17 @@ def parse(inp):
         yield LogLine(ts, guard_id, event)
 
 def coalesce(log):
-    cur_guard_id = None
-    for line in log:
-        if line.event == BEGINS:
-            cur_guard_id = line.guard_id
-            continue
+    def reducer(acc, el):
+        if el.event == BEGINS:
+            return (el.guard_id, acc[1])
 
-        yield LogLine(line.ts, cur_guard_id, line.event)
+        acc[1].append(LogLine(el.ts, acc[0], el.event))
+        return acc
+
+    return reduce(reducer, log, (None, []))[1]
 
 inp = open('day4.input').read().strip().split('\n')
-log = list(coalesce(sorted(parse(inp), key=lambda l: l.ts)))
+log = coalesce(sorted(parse(inp), key=lambda l: l.ts))
 
 assert len(log) % 2 == 0
 
