@@ -33,14 +33,14 @@ def format_message(stats):
         member = {
             **member,
             'name': member['name'] or 'ANON #{}'.format(member['id']),
-            'star_ts': { '1': None, '2':None }
+            'star_ts': { '1': None, '2': None, }
         }
         try:
             completion_today = member['completion_day_level'][str(today)]
         except KeyError:
             pass
         else:
-            for star in ('1', '2'):
+            for star in completion_today.keys():
                 member['star_ts'][star] = parse_ts(
                     completion_today[star]['get_star_ts']
                 )
