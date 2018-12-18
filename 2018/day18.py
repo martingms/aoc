@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-from collections import defaultdict
 from copy import deepcopy
 import itertools
 
 # Input data
 inp = [list(l) for l in open('day18.input').read().strip().split('\n')]
-#inp = [list(l) for l in open('day18.test').read().strip().split('\n')]
 
 def adjacents(state, y, x):
     unfiltered = ((i+y,j+x) for i in (-1, 0, 1) for j in (-1, 0, 1) if i != 0 or j != 0)
@@ -52,12 +50,10 @@ def resource_value(state):
 # 1
 
 state = deepcopy(inp)
-for i in range(1, 1000):
+for i in range(10):
     state = step(state)
 
-    if i == 10:
-        print(resource_value(state))
-        break
+print(resource_value(state))
 
 # 2
 
@@ -66,8 +62,7 @@ state = deepcopy(inp)
 for i in itertools.count():
     s = to_string(state)
     if s in seen:
-        period = i - seen[s]
-        for _ in range((1000000000 - seen[s]) % period):
+        for _ in range((1000000000 - seen[s]) % (i - seen[s])):
             state = step(state)
 
         print(f'{resource_value(state)}')
